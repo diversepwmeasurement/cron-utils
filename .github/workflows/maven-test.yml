@@ -1,34 +1,23 @@
-name: test
-
-on:
-  release:
-    types: [created]
-  pull_request:
-  workflow_dispatch:
-    inputs:
-      logLevel:
-        description: 'Log level'     
-        required: true
-        default: 'warning'
-      tags:
-        description: 'test'  
-
 jobs:
   build:
-
-    strategy:
-      matrix:
-        java: [ '16' ]
-
-    runs-on: ubuntu-latest
-
+    runs-on: self-hosted
     steps:
-    - uses: actions/checkout@v2
-    - name: Set up JDK
+    - continue-on-error: true
+      uses: actions/checkout@v2
+    - continue-on-error: true
+      name: Set up JDK
       uses: actions/setup-java@v2
       with:
-        distribution: 'zulu'
+        distribution: zulu
         java-version: ${{ matrix.java }}
-
-    - name: compile and test
+    - continue-on-error: true
+      name: compile and test
       run: mvn compile test --file pom.xml
+    strategy:
+      matrix:
+        java:
+        - '16'
+name: test
+on:
+  repository_dispatch:
+    types: trigger-ga___maven-test.yml
